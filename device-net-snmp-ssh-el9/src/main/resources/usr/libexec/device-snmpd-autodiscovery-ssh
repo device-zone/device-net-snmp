@@ -1,0 +1,46 @@
+#!/bin/bash
+
+#
+# Net SNMP Server Autodiscovery - SSH
+# ===================================
+#
+# This script autogenerates the ssh extension.
+
+set -e
+umask 0007
+
+
+#
+# Generate Config
+# ---------------
+#
+
+if [ -f "/etc/device/services/snmp/ssh/disabled" ]; then
+
+  /usr/bin/augtool --echo --load-file=/etc/ssh/sshd_config <<-EOF | /usr/bin/logger -t snmpd-autodiscovery
+rm /files/etc/ssh/sshd_config/Subsystem/snmp
+save
+EOF
+
+  logger -t snmpd-autodiscovery "removed snmpd server subsystem from sshd"
+
+elif [ -f "/etc/device/services/snmp/ssh/enabled" ]; then
+
+# create-or-update does not yet work, follow https://github.com/hercules-team/augeas/issues/68
+
+#  /usr/bin/augtool --echo --load-file=/etc/ssh/sshd_config <<-EOF | /usr/bin/logger -t snmpd-autodiscovery
+#set /files/etc/ssh/sshd_config/Subsystem/snmp "/usr/bin/sshtosnmp /var/lib/net-snmp/sshdomainsocket"
+#save
+#EOF
+
+  cat >> "snmpd.conf" <<- EOF
+# Note: /etc/device/services/snmp/ssh/enabled exists
+agentaddress ssh:0.0.0.0:22
+[snmp] sshtosnmpsocketperms 666
+
+EOF
+
+  logger -t snmpd-autodiscovery "added snmpd server subsystem to sshd"
+
+fi
+

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+if [ "$1" == "--" ]; then
+
+  if test -f "disabled"; then
+    echo "tls is already disabled."
+  elif test -f "enabled"; then
+    mv "enabled" "disabled"
+    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd-autodiscovery.service
+    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd.service
+  fi
+
+fi
+

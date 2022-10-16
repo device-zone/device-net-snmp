@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+if [ "$1" == "--" ]; then
+
+  /usr/bin/sudo /usr/bin/systemctl --quiet enable snmpd-autodiscovery.service
+  /usr/bin/sudo /usr/bin/systemctl --quiet enable snmpd.service
+
+  if test -f "enabled"; then
+    echo "snmp is already enabled."
+  elif test -f "disabled"; then
+    mv "disabled" "enabled"
+    /usr/bin/sudo /usr/bin/systemctl restart snmpd-autodiscovery.service
+    /usr/bin/sudo /usr/bin/systemctl restart snmpd.service
+  else
+    touch "enabled"
+    echo "snmp will be enabled on next reboot."
+  fi
+
+fi
+

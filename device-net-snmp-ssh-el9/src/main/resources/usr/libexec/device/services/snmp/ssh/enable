@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+if [ "$1" == "--" ]; then
+
+  if test -f "enabled"; then
+    echo "ssh is already enabled."
+  elif test -f "disabled"; then
+    mv "disabled" "enabled"
+    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd-autodiscovery.service
+    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd.service
+    /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart sshd.service
+  else
+    touch "enabled"
+    echo "ssh will be enabled on next reboot."
+  fi
+
+fi
+

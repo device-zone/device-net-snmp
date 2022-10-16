@@ -1,0 +1,18 @@
+# systemd service for managing all net-snmp autoconfiguration.
+
+[Unit]
+Description=Net-SNMP Configuration Autodiscovery
+#Requires=snmpd.service
+#PartOf=snmpd.service
+#ReloadPropagatedFrom=snmpd.service
+Before=snmpd.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/device-snmpd-autodiscovery
+ExecReload=/bin/bash /usr/libexec/device-snmpd-autodiscovery
+RemainAfterExit=on
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,68 @@
+#!/bin/bash
+
+#
+# Net SNMP Server Autodiscovery - TSM
+# ===================================
+#
+# This script autogenerates the tsm extension.
+
+set -e
+umask 0007
+
+
+#
+# Generate Config
+# ---------------
+#
+
+logger -t "${0}" "Notice: Adding TSM users to net-snmp snmpd.conf..."
+while IFS= read -r -d '' path; do
+
+  secname=$(head -n 1 ${path}/name.txt)
+
+  if [ -f "${path}/tls-dns.txt" ]; then
+
+    tls_dns=$(head -n 1 ${path}/tls-dns.txt)
+
+    logger -t snmpd-autodiscovery "importing snmpd client certificate/key for ${secname}..."
+
+    install -m 0700 -d /etc/snmp/tls /etc/snmp/tls/ca-certs /etc/snmp/tls/certs /etc/snmp/tls/private
+
+    redwax-tool --pem-in="/etc/pki/tls/private/*" \
+                --pem-in="/etc/pki/tls/certs/ca-bundle.trust.crt" \
+                --pem-in="/etc/pki/tls/certs/*.pem" \
+                --filter=verify \
+                --filter-hostname="${tls_dns}" \
+                --filter-current \
+                --cert-out --no-chain-out --no-key-out \
+                --pem-out="/etc/snmp/tls/certs/client-${secname}.crt" || echo "Could not import cert/key for tls" > "error"
+
+    if test ! -f "error"; then
+      logger -t snmpd-autodiscovery "imported snmpd server certificate/key for ${secname}."
+    else
+      logger -t snmpd-autodiscovery "failed to import snmpd server certificate/key for ${secname}."
+    fi
+
+    cat >> "snmpd.conf" <<- EOF
+# Note: certificate from /etc/device/services/snmp/tsm/${secname}/tls-dns.txt
+certSecName 10 "client-${secname}" --sn "${secname}"
+rouser -s tsm "${secname}"
+EOF
+
+  else
+
+    cat >> "snmpd.conf" <<- EOF
+rouser -s tsm "${secname}"
+EOF
+
+    logger -t snmpd-autodiscovery "added TSM entry for ${secname}."
+
+  fi
+
+  cat >> "snmpd.conf" <<- EOF
+
+EOF
+
+done < <(find /etc/device/services/snmp/tsm/ -mindepth 1 -maxdepth 1 -type l -print0)
+
+

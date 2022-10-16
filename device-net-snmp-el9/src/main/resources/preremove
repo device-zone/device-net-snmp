@@ -1,0 +1,7 @@
+if [ $1 = 0 ]; then
+  /usr/bin/systemctl stop snmpd-autodiscovery.service
+  /usr/bin/systemctl stop snmpd.service
+  /usr/bin/systemctl disable snmpd-autodiscovery.service
+  /usr/bin/systemctl disable snmpd.service
+fi
+

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+if [ "$1" == "--" ]; then
+
+  /usr/libexec/device-set --add name --fqdn name --fqdn tls-dns "$@"
+
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd-autodiscovery.service
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd.service
+
+elif [ "$1" == "-c" ]; then
+
+  /usr/libexec/device-set --add name --fqdn name --fqdn tls-dns "$@"
+
+fi
+

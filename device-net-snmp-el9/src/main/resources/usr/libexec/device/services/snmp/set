@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+if [ "$1" == "--" ]; then
+
+  /usr/libexec/device-set --text contact --text location "$@"
+
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart smtpd-autodiscovery.service
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart smtpd.service
+
+elif [ "$1" == "-c" ]; then
+
+  /usr/libexec/device-set --text contact --text location "$@"
+
+fi
+

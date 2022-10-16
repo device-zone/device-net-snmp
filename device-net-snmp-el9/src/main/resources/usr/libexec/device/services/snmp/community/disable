@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+if [ "$1" == "--" ]; then
+
+  /usr/bin/sudo /usr/bin/systemctl --quiet disable opendkim-autodiscovery.service
+  /usr/bin/sudo /usr/bin/systemctl --quiet disable opendkim.service
+
+  if test -f "disabled"; then
+    echo "dkim is already disabled."
+  elif test -f "enabled"; then
+    mv "enabled" "disabled"
+    /usr/bin/sudo /usr/bin/systemctl stop opendkim.service
+    /usr/bin/sudo /usr/bin/systemctl stop opendkim-autodiscovery.service
+  fi
+
+  if test -f "disabled"; then
+    /bin/rm -f /etc/device/services/mail/smtp/milters/10-opendkim
+  fi
+
+fi
+

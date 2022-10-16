@@ -1,0 +1,59 @@
+#!/bin/bash
+
+#
+# Net SNMP Server Autodiscovery - TLS
+# ===================================
+#
+# This script autogenerates the tls extension.
+
+set -e
+umask 0007
+
+
+#
+# Generate Config
+# ---------------
+#
+
+if [ -f "/etc/device/services/snmp/tls/tls-dns.txt" ]; then
+
+  tls_dns=$(head -n 1 /etc/device/services/snmp/tls/tls-dns.txt)
+
+  logger -t snmpd-autodiscovery "importing snmpd server certificate/key..."
+
+  install -m 0700 -d /etc/snmp/tls /etc/snmp/tls/ca-certs /etc/snmp/tls/certs /etc/snmp/tls/private
+
+  redwax-tool --pem-in="/etc/pki/tls/private/*" \
+              --pem-in="/etc/pki/tls/certs/ca-bundle.trust.crt" \
+              --pem-in="/etc/pki/tls/certs/*.pem" \
+              --filter=verify \
+              --filter-hostname="${tls_dns}" \
+              --filter-current \
+              --cert-out --chain-out --no-key-out \
+              --pem-out="/etc/snmp/tls/certs/snmpd.crt" \
+              --no-cert-out --no-chain-out --trust-out \
+              --pem-out="/etc/snmp/tls/ca-certs/ssl-cacert.pem" \
+              --no-chain-out --no-trust-out --key-out \
+	      --pem-out="/etc/snmp/tls/private/snmpd.key" || echo "Could not import cert/key for tls" > "error"
+
+  if test ! -f "error"; then
+    logger -t snmpd-autodiscovery "imported snmpd server certificate/key."
+  else
+    logger -t snmpd-autodiscovery "failed to import snmpd server certificate/key."
+  fi
+
+  cat >> "snmpd.conf" <<- EOF
+# Note: certificate from /etc/device/services/snmp/tls/tls-dns.txt
+agentaddress dtlsudp:10161,dtlsudp:[::]:10161
+[snmp] localCert snmpd
+[snmp] trustCert ssl-cacert
+
+EOF
+
+  if command -v /usr/bin/firewall-cmd 2>/dev/null; then
+    logger -t snmpd-autodiscovery "Notice: enabling firewall for snmp over tls/dtls..."
+    /usr/bin/firewall-cmd --quiet --zone=public --add-port=10161/udp 2> /dev/null || true
+  fi
+
+fi
+

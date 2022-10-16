@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+if [ "$1" == "--" ]; then
+
+  /usr/libexec/device-set --add name --fqdn name --text authentication-password --select-base /usr/libexec/device/services/snmp/usm/authentication-protocols.txt --select authentication-protocol --text encryption-password --select-base /usr/libexec/device/services/snmp/usm/encryption-protocols.txt --select encryption-protocol --required --select-base /usr/libexec/device/services/snmp/usm/security-levels.txt --select security-level "$@"
+
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd-autodiscovery.service
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd.service
+
+elif [ "$1" == "-c" ]; then
+
+  /usr/libexec/device-set --add name --fqdn name --text authentication-password --select-base /usr/libexec/device/services/snmp/usm/authentication-protocols.txt --select authentication-protocol --text encryption-password --select-base /usr/libexec/device/services/snmp/usm/encryption-protocols.txt --select encryption-protocol --required --select-base /usr/libexec/device/services/snmp/usm/security-levels.txt --select security-level "$@"
+
+fi
+

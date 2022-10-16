@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+if [ "$1" == "--" ]; then
+
+  /usr/bin/sudo /usr/bin/systemctl --quiet disable snmpd-autodiscovery.service
+  /usr/bin/sudo /usr/bin/systemctl --quiet disable snmpd.service
+
+  if test -f "disabled"; then
+    echo "snmp is already disabled."
+  elif test -f "enabled"; then
+    mv "enabled" "disabled"
+    /usr/bin/sudo /usr/bin/systemctl stop snmpd.service
+    /usr/bin/sudo /usr/bin/systemctl stop snmpd-autodiscovery.service
+  fi
+
+fi
+

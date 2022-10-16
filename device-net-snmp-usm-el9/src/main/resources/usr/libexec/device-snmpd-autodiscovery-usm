@@ -1,0 +1,125 @@
+#!/bin/bash
+
+#
+# Net SNMP Server Autodiscovery - TSM
+# ===================================
+#
+# This script autogenerates the tsm extension.
+
+set -e
+umask 0007
+
+
+#
+# Generate Config
+# ---------------
+#
+
+logger -t "${0}" "Notice: Adding USM users and passphrases to net-snmp snmpd.conf..."
+while IFS= read -r -d '' path; do
+
+  secname=$(head -n 1 ${path}/name.txt)
+  security_level=none
+  if test -f "${path}/security-level.txt"; then
+    security_level=$(head -n 1 ${path}/security-level.txt)
+  fi
+  authentication_protocol=SHA-256
+  if test -f "${path}/authentication-protocol.txt"; then
+    authentication_protocol=$(head -n 1 ${path}/authentication-protocol.txt)
+  fi
+  authentication_password=
+  if test -f "${path}/authentication-password.txt"; then
+    authentication_password=$(head -n 1 ${path}/authentication-password.txt)
+  fi
+  encryption_protocol=AES
+  if test -f "${path}/encryption-protocol.txt"; then
+    encryption_protocol=$(head -n 1 ${path}/encryption-protocol.txt)
+  fi
+  encryption_password=
+  if test -f "${path}/encryption-password.txt"; then
+    encryption_password=$(head -n 1 ${path}/encryption-password.txt)
+  fi
+
+  logger -t snmpd-autodiscovery "importing snmpd usm user ${secname}..."
+
+  case ${security_level} in
+  none)
+
+    cat >> snmpd.conf <<- EOF
+rouser -s usm ${secname}
+EOF
+
+    cat >> /var/lib/net-snmp/snmpd.conf <<- EOF
+createUser "${secname}"
+EOF
+
+    logger -t snmpd-autodiscovery "Notice: snmp user '${secname}' added with no security."
+
+    found=true
+
+    ;;
+  authenticated)
+
+    if test -z "${authentication_password}"; then
+      logger -t snmpd-autodiscovery "Notice: snmp user '${secname}' has no authentication-password, skipped."
+    else
+
+      cat >> snmpd.conf <<- EOF
+rouser -s usm ${secname}
+EOF
+
+      cat >> /var/lib/net-snmp/snmpd.conf <<- EOF
+createUser "${secname}" "${authentication_protocol}" "${authentication_password}"
+EOF
+      logger -t snmpd-autodiscovery "Notice: snmp user '${secname}' added with ${authentication_protocol} authentication."
+
+      found=true
+
+    fi
+
+    ;;
+  authenticated-and-private)
+
+    if test -z "${authentication_password}"; then
+      logger -t snmpd-autodiscovery "Notice: snmp user '${secname}' has no authentication-password, skipped." 
+    elif test -z "${encryption_password}"; then
+      logger -t snmpd-autodiscovery "Notice: snmp user '${secname}' has no encryption-password, skipped."
+    else
+
+      cat >> snmpd.conf <<- EOF
+rouser -s usm ${secname}
+EOF
+
+      cat >> /var/lib/net-snmp/snmpd.conf <<- EOF
+createUser "${secname}" "${authentication_protocol}" "${authentication_password}" "${encryption_protocol}" "${encryption_password}"
+EOF
+
+      logger -t snmpd-autodiscovery "Notice: snmp user '${secname}' added with ${authentication_protocol} authentication and ${encryption_protocol} encryption."
+
+      found=true
+
+    fi
+
+    ;;
+  *)
+    logger -t snmpd-autodiscovery "Warning: security-level '${security_level}' not recognised, skipping snmp user '${secname}'."
+    ;;
+  esac
+
+done < <(find /etc/device/services/snmp/usm/ -mindepth 1 -maxdepth 1 -type l -print0)
+
+if test -n "${found}"; then
+
+  cat >> "snmpd.conf" <<- EOF
+# Note: usm users in /etc/device/services/snmp/usm
+agentaddress udp:161,udp6:161
+
+EOF
+
+  if command -v /usr/bin/firewall-cmd 2>/dev/null; then
+    logger -t snmpd-autodiscovery "Notice: enabling firewall for snmp with USM (161)..."
+    /usr/bin/firewall-cmd --quiet --zone=public --add-port=snmp/udp 2> /dev/null || true
+  fi
+
+fi
+
