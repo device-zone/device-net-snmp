@@ -249,4 +249,3 @@ To update the authentication-protocol being used with the name monitor, run this
 [root@server ~]# device services snmp usm set monitor authentication-protocol=SHA-256
 ```
 
-
