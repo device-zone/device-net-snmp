@@ -4,7 +4,7 @@
   <parent>
     <artifactId>device-net-snmp</artifactId>
     <groupId>zone.device.platform</groupId>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.9.0</version>
   </parent>
 
   <properties>
@@ -18,7 +18,7 @@
 
   <artifactId>device-net-snmp-tsm</artifactId>
   <groupId>zone.device.platform.el9</groupId>
-  <version>0.9.0-SNAPSHOT</version>
+  <version>0.9.0</version>
   <packaging>rpm</packaging>
   <name>device net-snmp tsm extension for el9</name>
   <description>Packaging for the net-snmp tsm extension for ${release.distribution}</description>
