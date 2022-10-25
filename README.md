@@ -42,3 +42,33 @@ To switch the appliance off, run this.
 ```
 
 
+# device-net-snmp-ssh
+Provides an SSH extension to a Net-SNMP appliance
+
+This extension does the following:
+
+- All parameters passed to the device commands are syntax checked and canonicalised, with bash completion.
+- Automatically configures net-snmp's and sshd's configuration files before startup.
+- Enables the "snmp" subsytem in sshd.
+- Autostarts on server restart.
+- Zero Trust configuration.
+
+Users that are allowed access via SSH are added using the device-net-snmp-tsm extension.
+
+## enable
+
+To enable SSH support, run this.
+
+```
+[root@server ~]# device services snmp ssh enable
+```
+
+## disable
+
+To disable appliance support, run this.
+
+```
+[root@server ~]# device services snmp ssh disable
+```
+
+
