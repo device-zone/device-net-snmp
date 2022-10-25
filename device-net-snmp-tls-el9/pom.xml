@@ -4,7 +4,7 @@
   <parent>
     <artifactId>device-net-snmp</artifactId>
     <groupId>zone.device.platform</groupId>
-    <version>0.9.1-SNAPSHOT</version>
+    <version>0.9.1</version>
   </parent>
 
   <properties>
@@ -18,7 +18,7 @@
 
   <artifactId>device-net-snmp-tls</artifactId>
   <groupId>zone.device.platform.el9</groupId>
-  <version>0.9.1-SNAPSHOT</version>
+  <version>0.9.1</version>
   <packaging>rpm</packaging>
   <name>device net-snmp tls extension for el9</name>
   <description>Packaging for the net-snmp tls extension for ${release.distribution}</description>
