@@ -180,15 +180,15 @@ lrwxrwxrwx. 1 root root   55 Jul 28 21:08 ca-bundle.trust.crt -> /etc/pki/ca-tru
 -rw-r--r--. 1 root root 4136 Aug 20 12:51 seawitch.example.com-sectigo-2023-hostChain.pem
 ```
 
-# add TSM user
+## add TSM user
 
-To enable access via SSH or DTLS to the user "monitor" who way present a certificate matching "monitor.example.com", run this
+To enable access via SSH or DTLS to the user "monitor" who may present a certificate matching "monitor.example.com", run this
 
 ```
 [root@server ~]# device services snmp tsm add name="monitor" tls-dns=monitor.example.com
 ```
 
-# remove TSM user
+## remove TSM user
 
 To remove the entry above with name "monitor", run this.
 
@@ -196,12 +196,57 @@ To remove the entry above with name "monitor", run this.
 [root@server ~]# device services snmp tsm remove monitor
 ```
 
-# set parameters for existing user
+## set parameters for existing user
 
 To update the certificate being used with the name monitor, run this.
 
 ```
 [root@server ~]# device services snmp tsm set monitor tls-dns=monitor.example.com
+```
+
+
+# device-net-snmp-usm
+Provides a USM extension to a Net-SNMP appliance
+
+This extension does the following:
+
+- All parameters passed to the device commands are syntax checked and canonicalised, with bash completion.
+- Automatically configures net-snmp's configuration files before startup.
+- Allows the specification of the name of a user that will be allowed to access SNMP over UDP, using the secrets provided.
+- If at least one user is specified, opens the UDP port 161.
+- Autostarts on server restart.
+- Zero Trust configuration.
+
+## before
+
+- Deploy the device-net-snmp-usm package.
+
+```
+[root@server ~]# dnf install device-net-snmp-usm
+```
+
+## add USM user
+
+To enable access via UDP to the user "monitor" who must use SHA-512 for authentication and AES for encryption, using the password "very-long-secret", run this:
+
+```
+[root@server ~]# device services snmp usm add name=monitor authentication-protocol=SHA-512 authentication-password="very-long-secret" encryption-protocol=AES encryption-password="very-long-secret" security-level=authenticated-and-private
+```
+
+## remove USM user
+
+To remove the entry above with name "monitor", run this.
+
+```
+[root@server ~]# device services snmp usm remove monitor
+```
+
+## set parameters for existing user
+
+To update the authentication-protocol being used with the name monitor, run this.
+
+```
+[root@server ~]# device services snmp usm set monitor authentication-protocol=SHA-256
 ```
 
 
