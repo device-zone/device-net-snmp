@@ -26,12 +26,12 @@ EOF
 
 elif [ -f "/etc/device/services/snmp/ssh/enabled" ]; then
 
-# create-or-update does not yet work, follow https://github.com/hercules-team/augeas/issues/68
+  # follow https://github.com/hercules-team/augeas/issues/68 for how this works
 
-#  /usr/bin/augtool --echo --load-file=/etc/ssh/sshd_config <<-EOF | /usr/bin/logger -t snmpd-autodiscovery
-#set /files/etc/ssh/sshd_config/Subsystem/snmp "/usr/bin/sshtosnmp /var/lib/net-snmp/sshdomainsocket"
-#save
-#EOF
+  /usr/bin/augtool --echo --load-file=/etc/ssh/sshd_config <<-EOF | /usr/bin/logger -t snmpd-autodiscovery
+set /files/etc/ssh/sshd_config/Subsystem[snmp]/snmp "/usr/bin/sshtosnmp /var/lib/net-snmp/sshdomainsocket"
+save
+EOF
 
   cat >> "snmpd.conf" <<- EOF
 # Note: /etc/device/services/snmp/ssh/enabled exists
