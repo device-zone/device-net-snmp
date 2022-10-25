@@ -155,7 +155,7 @@
             </mapping>
           </mappings>
           <requires>
-            <require>device-net-snmp-tls</require>
+            <require>device-net-snmp</require>
           </requires>
         </configuration>
       </plugin>
