@@ -104,6 +104,6 @@ done
 # ------------------------
 #
 
-mv "snmpd.conf" "/etc/snmp/snmpd.conf"
+mv "snmpd.conf" "/etc/snmp/snmpd.local.conf"
 
 
