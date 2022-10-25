@@ -168,44 +168,6 @@
                 </source>
               </sources>
             </mapping>
-            <mapping>
-              <directory>/etc/device/services/snmp/community</directory>
-              <directoryIncluded>true</directoryIncluded>
-              <filemode>2775</filemode>
-              <username>root</username>
-              <groupname>device</groupname>
-            </mapping>
-            <mapping>
-              <directory>/usr/libexec/device/services/snmp/community</directory>
-              <directoryIncluded>true</directoryIncluded>
-              <filemode>755</filemode>
-              <username>root</username>
-              <groupname>root</groupname>
-            </mapping>
-            <mapping>
-              <directory>/usr/libexec/device/services/snmp/community</directory>
-              <directoryIncluded>false</directoryIncluded>
-              <filemode>755</filemode>
-              <username>root</username>
-              <groupname>root</groupname>
-              <sources>
-                <source>
-                  <location>target/classes/usr/libexec/device/services/snmp/community/enable</location>
-                </source>
-                <source>
-                  <location>target/classes/usr/libexec/device/services/snmp/community/disable</location>
-                </source>
-                <source>
-                  <location>target/classes/usr/libexec/device/services/snmp/community/add</location>
-                </source>
-                <source>
-                  <location>target/classes/usr/libexec/device/services/snmp/community/remove</location>
-                </source>
-                <source>
-                  <location>target/classes/usr/libexec/device/services/snmp/community/set</location>
-                </source>
-              </sources>
-            </mapping>
           </mappings>
           <postinstallScriptlet>
             <scriptFile>target/classes/postinstall</scriptFile>

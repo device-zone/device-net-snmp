@@ -38,7 +38,7 @@ cd "${tmpdir}"
 
 dontLogTCPWrappersConnects yes
 includeAllDisks 10%
-tsmUseTransportPrefix yes
+agentaddress /run/net-snmp/snmpd.sock
 
 EOF
 
