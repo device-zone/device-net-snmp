@@ -135,6 +135,7 @@
           </mappings>
           <requires>
             <require>device-net-snmp</require>
+            <require>device-net-snmp-tsm</require>
             <require>/usr/bin/augtool</require>
             <require>/usr/bin/sshtosnmp</require>
           </requires>
