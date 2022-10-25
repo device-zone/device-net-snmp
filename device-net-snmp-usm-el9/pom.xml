@@ -4,7 +4,7 @@
   <parent>
     <artifactId>device-net-snmp</artifactId>
     <groupId>zone.device.platform</groupId>
-    <version>0.9.3-SNAPSHOT</version>
+    <version>0.9.3</version>
   </parent>
 
   <properties>
@@ -18,7 +18,7 @@
 
   <artifactId>device-net-snmp-usm</artifactId>
   <groupId>zone.device.platform.el9</groupId>
-  <version>0.9.3-SNAPSHOT</version>
+  <version>0.9.3</version>
   <packaging>rpm</packaging>
   <name>device net-snmp usm extension for el9</name>
   <description>Packaging for the net-snmp usm extension for ${release.distribution}</description>
