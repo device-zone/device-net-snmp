@@ -7,8 +7,8 @@ if [ "$1" == "--" ]; then
 
   /usr/libexec/device-set --text contact --text location "$@"
 
-  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart smtpd-autodiscovery.service
-  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart smtpd.service
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd-autodiscovery.service
+  /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart snmpd.service
 
 elif [ "$1" == "-c" ]; then
 
