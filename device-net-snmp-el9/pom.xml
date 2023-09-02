@@ -4,7 +4,7 @@
   <parent>
     <artifactId>device-net-snmp</artifactId>
     <groupId>zone.device.platform</groupId>
-    <version>0.9.5</version>
+    <version>0.9.6-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -18,7 +18,7 @@
 
   <artifactId>device-net-snmp</artifactId>
   <groupId>zone.device.platform.el9</groupId>
-  <version>0.9.5</version>
+  <version>0.9.6-SNAPSHOT</version>
   <packaging>rpm</packaging>
   <name>device net-snmp applicance for el9</name>
   <description>Packaging for the net-snmp appliance for ${release.distribution}</description>
