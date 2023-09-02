@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+umask 0002
+
+OPTIONS="--show name --show-table name,authentication-password,authentication-protocol,encryption-password,encryption-protocol,security-level --fqdn name --text authentication-password --select-base /usr/libexec/device/services/snmp/usm/authentication-protocols.txt --select authentication-protocol --text encryption-password --select-base /usr/libexec/device/services/snmp/usm/encryption-protocols.txt --select encryption-protocol --required --select-base /usr/libexec/device/services/snmp/usm/security-levels.txt --select security-level"
+
+if [ "$1" == "--" ]; then
+
+  /usr/libexec/device-set ${OPTIONS} "$@"
+
+elif [ "$1" == "-c" ]; then
+
+  /usr/libexec/device-set ${OPTIONS} "$@"
+
+fi
+

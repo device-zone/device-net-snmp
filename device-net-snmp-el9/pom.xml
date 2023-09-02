@@ -166,6 +166,9 @@
                 <source>
                   <location>target/classes/usr/libexec/device/services/snmp/set</location>
                 </source>
+                <source>
+                  <location>target/classes/usr/libexec/device/services/snmp/show</location>
+                </source>
               </sources>
             </mapping>
           </mappings>
